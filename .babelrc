@@ -1,0 +1,30 @@
+{
+  "comments": false,
+  "env": {
+    "main": {
+      "presets": [
+        ["@babel/env", {
+          "targets": { "node":"current" }
+        }]
+      ]
+    },
+    "renderer": {
+      "presets": [
+        ["@babel/env", {
+          "modules": false
+        }]
+      ],
+      "plugins": [
+        "babel-plugin-transform-vue-jsx"
+      ]
+    },
+    "web": {
+      "presets": [
+        ["@babel/env", {
+          "modules": false
+        }]
+      ]
+    }
+  },
+  "plugins": ["@babel/plugin-proposal-function-bind", "@babel/plugin-syntax-dynamic-import"]
+}
