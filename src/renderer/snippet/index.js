@@ -1,20 +1,19 @@
-export const LIST_LAYOUT_SNIPPET = (slot, h) => {
-    return (<div class="page-body B2b">
-        <div class="page-body-cont">
-            <div class="query-cont__row">
-                {slot.search}
-                <div class="query-cont__col">
-                    <h-button type="primary">查询</h-button>
-                    <h-button>重置</h-button>
-                    {slot.isExport ? '<h-button @click="onReset">重置</h-button>' : ''}
-                </div>
+export const LIST_LAYOUT_SNIPPET = (slot) => `
+<div class="page-body B2b">
+    <div class="page-body-cont">
+        <div class="query-cont__row">
+            ${slot.search}
+            <div class="query-cont__col">
+                <h-button type="primary" @click="onQuery">查询</h-button>
+                <h-button @click="onReset">重置</h-button>
+                ${slot.isExport ? '<h-button @click="onReset">重置</h-button>' : ''}
             </div>
-            {slot.button}
-            {slot.table}
         </div>
-    </div>)
-}
-
+        ${slot.button}
+        ${slot.table}
+    </div>
+</div>
+`
 export const SEARCH_ITEM_SNIPPET = (data) => `
 <div class="query-cont__col">
     <div class="query-col__lable">${data.label}</div>
