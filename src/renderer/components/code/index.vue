@@ -2,13 +2,13 @@
     <div class="code-main">
         <div class="code-content" @click="onProxy">
             <div v-if="layout">
-                <Preview :code="code"></Preview>
+                <Preview :code="code" :codeConfig="codeConfig"></Preview>
             </div>
             <i class="el-icon-circle-plus-outline add-template" @click="onShowLayout" v-else></i>
         </div>
         <el-dialog title="选择模板" :visible.sync="layoutVisible" width="500px" :modal=false>
-            <el-form ref="layoutForm" :model="layoutForm" :rules="layoutRules" label-width="120px">
-                <el-form-item label="模板:" label-width='120px' prop='template'>
+            <el-form ref="layoutForm" :model="layoutForm" :rules="layoutRules" label-width="100px">
+                <el-form-item label="模板:" label-width='100px' prop='template'>
                     <el-select v-model="layoutForm.template" clearable>
                         <el-option v-for="(item, index) in layoutOptions" :key="index" :label="item.label" :value="item.value">
                         </el-option>
@@ -33,15 +33,25 @@
                 </li>
             </ul>
         </el-drawer>
-        <el-dialog title="编辑" :visible.sync="editItemVisible" width="600px" :modal=false>
+        <el-dialog class="edit-dialog" title="编辑" :visible.sync="editItemVisible" width="600px" :modal=false>
             <el-form ref="itemForm" :model="itemForm" :rules="layoutRules" label-width="100px">
                 <template v-for="(item, index) in itemFormOptions" >
                     <el-form-item :label="item.key" label-width='100px' :key="index" :prop="item.key"
                         v-if="item.isShow()">
-                        <template v-if="item.key === 'model'">
+                        <template v-if="item.key === 'model' || item.key.indexOf('Model') !== -1">
                             <el-input v-model="itemForm[item.key]">
                                 <template slot="prepend">queryParams.</template>
                             </el-input>
+                        </template>
+                        <template v-else-if="item.key === 'dateType' && itemForm.type === 'search_date_area'">
+                            <el-select v-model="itemForm[item.key]">
+                                <el-option v-for="(obj, index) in options.dateAreaType" :key="index" :label="obj.label" :value="obj.value"></el-option>
+                            </el-select>
+                        </template>
+                        <template v-else-if="item.key === 'format' && itemForm.type === 'search_date_area'">
+                            <el-select v-model="itemForm[item.key]">
+                                <el-option v-for="(obj, index) in options.dateAreaFormat" :key="index" :label="obj.label" :value="obj.value"></el-option>
+                            </el-select>
                         </template>
                         <template v-else-if="item.key === 'isConst' || item.key === 'isMulti' || item.key === 'canSearch'">
                             <el-radio v-model="itemForm[item.key]" :label="true">是</el-radio>
@@ -89,11 +99,12 @@
 </template>
 
 <script>
+import fs from 'fs-extra'
 import * as snippet from '@/snippet/snippet'
 import Preview from './preview'
 import { generateHtml } from '@/helper/code_helper'
 import * as config from './config'
-import { LIST_CLASS } from './const'
+import { LIST_CLASS, OPTIONS } from './const'
 export default {
     name: 'auto_code',
     components: {
@@ -127,15 +138,20 @@ export default {
                 list_search: [
                     { type: 'SEARCH_ITEM', config: { label: '', type: '' } }
                 ],
-                list_action: [],
-                list_table: []
+                list_action: [
+                    { type: '', config: { label: '', type: '' } }
+                ],
+                list_table: [
+                    { type: '', config: { label: '', type: '' } }
+                ]
             },
             editIndex: 0,
             itemForm: {},
             exportForm: {
                 fileName: 'index',
                 path: ''
-            }
+            },
+            options: OPTIONS
         }
     },
     computed: {
@@ -224,7 +240,11 @@ export default {
             this.editVisible = false
         },
         onAddItem (index) {
-            this.editForm[this.editKey].splice(index + 1, 0, {type: 'SEARCH_ITEM', config: {label: '', type: ''}})
+            if (this.editKey === 'list_search') {
+                this.editForm[this.editKey].splice(index + 1, 0, {type: 'SEARCH_ITEM', config: {label: '', type: ''}})
+            } else {
+                this.editForm[this.editKey].splice(index + 1, 0, {type: '', config: {label: '', type: ''}})
+            }
         },
         onRemoveItem (index) {
             if (this.editForm[this.editKey].length === 1) {
@@ -239,7 +259,6 @@ export default {
             this.editIndex = index
             this.editItemVisible = true
             this.itemForm = JSON.parse(JSON.stringify(this.editForm[this.editKey][this.editIndex].config))
-            // this.editForm[this.editKey][index].config
         },
         onEditItemOK () {
             this.editForm[this.editKey][this.editIndex].config = JSON.parse(JSON.stringify(this.itemForm))
@@ -254,13 +273,41 @@ export default {
         onChangeItemType (val, index) {
             const selectedItem = this.itemTypeOptions.filter(item => item.value === val)
             const selectedConfig = JSON.parse(JSON.stringify(selectedItem[0].config))
-            selectedConfig.label = this.editForm[this.editKey][index].config.label
+            // 当没有设置默认值的时候，label为我们设置的label，一般设置默认值的都是不需要修改的label
+            if (!selectedConfig.label) {
+                selectedConfig.label = this.editForm[this.editKey][index].config.label
+            }
             this.editForm[this.editKey][index].config = selectedConfig
         },
         onShowExport () {
             this.exportVisible = true
         },
         onExport () {
+            if (!this.exportForm.path) {
+                this.$alert('请先指定生成代码地址', '提示', {
+                    confirmButtonText: '关闭'
+                })
+                return
+            }
+            this.exporting = true
+            const exportFileName = this.exportForm.fileName + '.vue'
+            // 如果没有目录则创建
+            fs.ensureDir(this.exportForm.path, (err) => {
+                if (err) {
+                    this.exporting = false
+                    this.$message.success('目录创建失败：' + err)
+                } else {
+                    fs.writeFile(this.exportForm.path + '/' + exportFileName, '<template>' + this.code + '</template>', (err) => {
+                        if (err) {
+                            this.exporting = false
+                            this.$message.success('导出失败：' + err)
+                        } else {
+                            this.exporting = false
+                            this.$message.success('导出成功')
+                        }
+                    })
+                }
+            })
         }
     }
 }
@@ -332,6 +379,9 @@ export default {
     .drawer-button {
         text-align: right;
     }
+}
+.edit-dialog /deep/ .el-dialog .el-input {
+    width: 400px;
 }
 /deep/ .el-drawer__header>:first-child {
     outline-style: none

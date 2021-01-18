@@ -25,11 +25,12 @@ export const getVueScript = (data) => {
 export const generateHtml = (data, snippet) => {
     let result = []
     data.map(item => {
+        const type = item.type || item.config.type
         if (item.children) {
             item.config.children = generateHtml(item.children, snippet).join('\n\r')
-            result.push(snippet[item.type.toUpperCase() + '_SNIPPET'](item.config))
+            result.push(snippet[type.toUpperCase() + '_SNIPPET'](item.config))
         } else {
-            result.push(snippet[item.type.toUpperCase() + '_SNIPPET'](item.config))
+            result.push(snippet[type.toUpperCase() + '_SNIPPET'](item.config))
         }
     })
     return result
