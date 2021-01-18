@@ -98,13 +98,14 @@ export const SEARCH_NUMBER_AREA_SNIPPET = (data) => {
 }
 
 export const BUTTON_SNIPPET = (data) => {
+    const clickEvent = data.clickEvent || 'onTempClick'
     if (data.buttonType) {
         return `
-        <h-button type="${data.buttonType}" @click="${data.clickEvent}">${data.label}</h-button>
+        <h-button type="${data.buttonType}" @click="${clickEvent}">${data.label}</h-button>
         `
     } else {
         return `
-        <h-button @click="${data.clickEvent}">${data.label}</h-button>
+        <h-button @click="${clickEvent}">${data.label}</h-button>
         `
     }
 }

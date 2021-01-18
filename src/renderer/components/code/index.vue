@@ -2,7 +2,7 @@
     <div class="code-main">
         <div class="code-content" @click="onProxy">
             <div v-if="layout">
-                <Preview :code="code" :codeConfig="codeConfig"></Preview>
+                <Preview :code="code" :codeConfig="codeConfig" :scriptCodeConfig="scriptCodeConfig"></Preview>
             </div>
             <i class="el-icon-circle-plus-outline add-template" @click="onShowLayout" v-else></i>
         </div>
@@ -21,8 +21,8 @@
             </span>
         </el-dialog>
         <el-drawer :title="editTitle" :visible.sync="editVisible" :before-close="onEditCancel" size='580px'>
-            <ul class="options-item-wrapper">
-                <li v-for="(item, index) in editForm[editKey]" :key="index" class="options-item">
+            <draggable v-model="editForm[editKey]" class="options-item-wrapper">
+                <div v-for="(item, index) in editForm[editKey]" :key="index" class="options-item">
                     <el-input v-model="item.config.label" class="mr10"></el-input>
                     <el-select v-model="item.config.type" @change="onChangeItemType($event, index)">
                         <el-option v-for="item in itemTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -30,8 +30,8 @@
                     <i class="el-icon-circle-plus-outline" @click="onAddItem(index)"></i>
                     <i class="el-icon-remove-outline" @click="onRemoveItem(index)"></i>
                     <i class="el-icon-edit-outline" @click="onEditItem(index)"></i>
-                </li>
-            </ul>
+                </div>
+            </draggable>
         </el-drawer>
         <el-dialog class="edit-dialog" title="编辑" :visible.sync="editItemVisible" width="600px" :modal=false>
             <el-form ref="itemForm" :model="itemForm" :rules="layoutRules" label-width="100px">
@@ -51,6 +51,11 @@
                         <template v-else-if="item.key === 'format' && itemForm.type === 'search_date_area'">
                             <el-select v-model="itemForm[item.key]">
                                 <el-option v-for="(obj, index) in options.dateAreaFormat" :key="index" :label="obj.label" :value="obj.value"></el-option>
+                            </el-select>
+                        </template>
+                        <template v-else-if="item.key === 'buttonType'">
+                            <el-select v-model="itemForm[item.key]">
+                                <el-option v-for="(obj, index) in options.buttonType" :key="index" :label="obj.label" :value="obj.value"></el-option>
                             </el-select>
                         </template>
                         <template v-else-if="item.key === 'isConst' || item.key === 'isMulti' || item.key === 'canSearch'">
@@ -93,6 +98,7 @@
             </div>
         </el-drawer>
         <div class="operate">
+            <h-button type="primary" @click="onSaveConfig">保存配置</h-button>
             <h-button type="primary" @click="onShowExport">导出代码</h-button>
         </div>
     </div>
@@ -100,15 +106,18 @@
 
 <script>
 import fs from 'fs-extra'
+import draggable from 'vuedraggable'
 import * as snippet from '@/snippet/snippet'
+import * as scriptSnippet from '@/snippet/scriptSnippet'
 import Preview from './preview'
-import { generateHtml } from '@/helper/code_helper'
+import { generateHtml, generateScript } from '@/helper/code_helper'
 import * as config from './config'
 import { LIST_CLASS, OPTIONS } from './const'
 export default {
     name: 'auto_code',
     components: {
-        Preview
+        Preview,
+        draggable
     },
     data () {
         return {
@@ -131,6 +140,11 @@ export default {
             },
             code: '',
             codeConfig: [], // 生成Code的Config
+            scriptCode: '',
+            scriptCodeConfig: {
+                data: {},
+                methods: []
+            },
             selectArea: '', // 当前选择的区域
             editTitle: '搜索区域编辑',
             editKey: '',
@@ -181,19 +195,61 @@ export default {
     watch: {
         editForm: {
             handler (val) {
+                // editForm是配置展示项的Form，当配置项发生变化，代码配置重新调整
+                // editForm中的属性和LIST_LAYOUT中的type做对应关系，editKey记录的是editForm中对应的key值
                 this.codeConfig = this.codeConfig.map(item => {
                     if (item.type === this.editKey.toUpperCase()) {
                         item.children = this.editForm[this.editKey]
                     }
                     return item
                 })
+                let queryParams = {}
+                let options = {}
+                let methods = this.scriptCodeConfig.methods
+                this.codeConfig.map(item => {
+                    if (item.children) {
+                        const modelItems = item.children.filter(item => {
+                            return item.config.model || item.config.startModel || item.config.endModel
+                        })
+                        modelItems.forEach(item => {
+                            if (item.config.type === 'search_select') {
+                                // 选择框可选项定义
+                                options[item.config.model + 'Options'] = []
+                            } else if (item.config.type === 'search_date_area') {
+                                // 时间搜索区域method，处理开始日期和结束日期disabled
+                                methods.push(scriptSnippet.START_PICKER_OPTIONS(item.config))
+                                methods.push(scriptSnippet.END_PICKER_OPTIONS(item.config))
+                            }
+                            if (item.config.model) {
+                                queryParams[item.config.model] = ''
+                            }
+                            if (item.config.startModel) {
+                                queryParams[item.config.startModel] = ''
+                            }
+                            if (item.config.endModel) {
+                                queryParams[item.config.endModel] = ''
+                            }
+                        })
+                    }
+                })
+                options.queryParams = queryParams
+                this.scriptCodeConfig.data = options
+                this.scriptCodeConfig.methods = methods
             },
             deep: true
         },
         codeConfig: {
             handler (val) {
-                console.log(val)
+                // 每次codeConfig发生变化。就重新生成代码进行展示
                 this.code = snippet['LAYOUT_SNIPPET'](generateHtml(val, snippet).join('\n\r'))
+            },
+            deep: true
+        },
+        scriptCodeConfig: {
+            handler (val) {
+                this.scriptCode = generateScript(val)
+                console.log(val)
+                console.log(this.scriptCode)
             },
             deep: true
         }
@@ -279,6 +335,12 @@ export default {
             }
             this.editForm[this.editKey][index].config = selectedConfig
         },
+        /**
+         * 下面的方法，都是保存和导出代码相关方法
+         */
+        onSaveConfig () {
+
+        },
         onShowExport () {
             this.exportVisible = true
         },
@@ -297,7 +359,9 @@ export default {
                     this.exporting = false
                     this.$message.success('目录创建失败：' + err)
                 } else {
-                    fs.writeFile(this.exportForm.path + '/' + exportFileName, '<template>' + this.code + '</template>', (err) => {
+                    const html = '<template>' + this.code + '</template>'
+                    const script = this.scriptCode
+                    fs.writeFile(this.exportForm.path + '/' + exportFileName, html + script, (err) => {
                         if (err) {
                             this.exporting = false
                             this.$message.success('导出失败：' + err)

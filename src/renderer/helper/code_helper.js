@@ -1,19 +1,19 @@
-export const getVueScript = (data) => {
+import pretty from 'pretty'
+export const generateScript = (data) => {
     let script = `
-    <script>
-        export default{
-            data () {
-                return {
-                    ${data.data}
-                }
-            },
-            methods: {
-                ${data.methods}
-            }
+
+<script>
+    export default{
+        data () {
+            return ${JSON.stringify(data.data)}
+        },
+        methods: {
+            ${data.methods.join(',')}
         }
-    </script>
+    }
+</script>
     `
-    return script
+    return pretty(script).replace('"', '\'').replace(';', '')
 }
 
 /**
@@ -29,7 +29,7 @@ export const generateHtml = (data, snippet) => {
         if (item.children) {
             item.config.children = generateHtml(item.children, snippet).join('\n\r')
             result.push(snippet[type.toUpperCase() + '_SNIPPET'](item.config))
-        } else {
+        } else if (type) {
             result.push(snippet[type.toUpperCase() + '_SNIPPET'](item.config))
         }
     })

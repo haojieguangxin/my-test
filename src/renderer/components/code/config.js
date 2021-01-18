@@ -88,7 +88,10 @@ export const LIST_SEARCH_CONFIG = [
         config: {
             type: 'search_button_query',
             label: '查询',
-            buttonType: 'primary'
+            buttonType: 'primary',
+            script: {
+                methods: [`onQuery() {}`]
+            }
         }
     },
     {
@@ -97,7 +100,10 @@ export const LIST_SEARCH_CONFIG = [
         config: {
             type: 'search_button_reset',
             label: '重置',
-            buttonType: ''
+            buttonType: '',
+            script: {
+                methods: [`onReset() {}`]
+            }
         }
     },
     {
@@ -106,7 +112,10 @@ export const LIST_SEARCH_CONFIG = [
         config: {
             type: 'search_button_export',
             label: '重置',
-            buttonType: ''
+            buttonType: '',
+            script: {
+                methods: [`onExport() {}`]
+            }
         }
     }
 ]

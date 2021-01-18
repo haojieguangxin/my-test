@@ -19,25 +19,9 @@ const adapter = new FileSync(path.join(STORE_PATH, '/data.json'))
 const db = Datastore(adapter)
 db._.mixin(LodashId)
 
-// 城市信息表
-if (!db.has('cityInfo').value()) {
-    db.set('cityInfo', []).write()
-}
-// 商品表
-if (!db.has('productInfo').value()) {
-    db.set('productInfo', []).write()
-}
-// 订单信息表
-if (!db.has('orderInfo').value()) {
-    db.set('orderInfo', []).write()
-}
-// 订单来源表
-if (!db.has('orderSourceInfo').value()) {
-    db.set('orderSourceInfo', []).write()
-}
-// 销售计划表
-if (!db.has('salesPlan').value()) {
-    db.set('salesPlan', []).write()
+// 代码信息表
+if (!db.has('codeInfo').value()) {
+    db.set('codeInfo', []).write()
 }
 
 export default db
