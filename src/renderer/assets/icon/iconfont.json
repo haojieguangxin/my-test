@@ -1,296 +1,114 @@
 {
-  "id": "1229056",
-  "name": "hosjoy_后台",
+  "id": "2753278",
+  "name": "研究生论文",
   "font_family": "iconfont",
-  "css_prefix_text": "",
-  "description": "好享家后台图标管理",
+  "css_prefix_text": "icon-",
+  "description": "",
   "glyphs": [
     {
-      "icon_id": "17920432",
-      "name": "shushiyun_merchant",
-      "font_class": "shushiyun_merchant1",
-      "unicode": "e629",
-      "unicode_decimal": 58921
+      "icon_id": "23684278",
+      "name": "下拉框",
+      "font_class": "select-copy",
+      "unicode": "e96b",
+      "unicode_decimal": 59755
     },
     {
-      "icon_id": "14167769",
-      "name": "hosjoy_hzh",
-      "font_class": "hosjoy_hzh",
-      "unicode": "e60a",
-      "unicode_decimal": 58890
+      "icon_id": "924568",
+      "name": "upload",
+      "font_class": "upload",
+      "unicode": "e96a",
+      "unicode_decimal": 59754
     },
     {
-      "icon_id": "14167770",
-      "name": "hosjoy_hcg",
-      "font_class": "hosjoy_hcg",
-      "unicode": "e623",
-      "unicode_decimal": 58915
+      "icon_id": "929796",
+      "name": "sliders",
+      "font_class": "slider",
+      "unicode": "e80e",
+      "unicode_decimal": 59406
     },
     {
-      "icon_id": "14167771",
-      "name": "hosjoy_jgzx",
-      "font_class": "hosjoy_jgzx",
-      "unicode": "e624",
-      "unicode_decimal": 58916
+      "icon_id": "1410253",
+      "name": "check-box-outline",
+      "font_class": "checkbox",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
     },
     {
-      "icon_id": "14167772",
-      "name": "hosjoy_zjzf",
-      "font_class": "hosjoy_zjzf",
-      "unicode": "e625",
-      "unicode_decimal": 58917
+      "icon_id": "8560318",
+      "name": "下拉框",
+      "font_class": "select",
+      "unicode": "e600",
+      "unicode_decimal": 58880
     },
     {
-      "icon_id": "14167773",
-      "name": "hosjoy_ptgsjsc",
-      "font_class": "hosjoy_ptgsjsc",
-      "unicode": "e626",
-      "unicode_decimal": 58918
+      "icon_id": "9568083",
+      "name": "Table",
+      "font_class": "table",
+      "unicode": "e658",
+      "unicode_decimal": 58968
     },
     {
-      "icon_id": "14167774",
-      "name": "hosjoy_shushiyun",
-      "font_class": "hosjoy_shushiyun",
-      "unicode": "e627",
-      "unicode_decimal": 58919
+      "icon_id": "10594747",
+      "name": "表-单据_jurassic",
+      "font_class": "form",
+      "unicode": "e6ae",
+      "unicode_decimal": 59054
     },
     {
-      "icon_id": "12800277",
-      "name": "leftbar_grey16_shebei@3x",
-      "font_class": "leftbar_grey_shebeix",
-      "unicode": "e603",
-      "unicode_decimal": 58883
-    },
-    {
-      "icon_id": "12800250",
-      "name": "leftbar_grey20_home",
-      "font_class": "leftbar_grey_home",
-      "unicode": "e601",
-      "unicode_decimal": 58881
-    },
-    {
-      "icon_id": "12800251",
-      "name": "leftbar_grey20_user",
-      "font_class": "leftbar_grey_user",
-      "unicode": "e602",
-      "unicode_decimal": 58882
-    },
-    {
-      "icon_id": "10977936",
-      "name": "hosjoy_jindiao",
-      "font_class": "hosjoy_jindiao",
-      "unicode": "e632",
-      "unicode_decimal": 58930
-    },
-    {
-      "icon_id": "10475097",
-      "name": "hosjoy_info",
-      "font_class": "hosjoy_info",
-      "unicode": "e622",
-      "unicode_decimal": 58914
-    },
-    {
-      "icon_id": "9911491",
-      "name": "icon_network_outage",
-      "font_class": "icon_network_outage",
-      "unicode": "e621",
-      "unicode_decimal": 58913
-    },
-    {
-      "icon_id": "9242988",
-      "name": "hosjoy_right",
-      "font_class": "hosjoy_right1",
-      "unicode": "e609",
-      "unicode_decimal": 58889
-    },
-    {
-      "icon_id": "9242965",
-      "name": "hosjoy_eye_close",
-      "font_class": "hosjoy_eye_close",
-      "unicode": "e608",
-      "unicode_decimal": 58888
-    },
-    {
-      "icon_id": "9242964",
-      "name": "hosjoy_eye",
-      "font_class": "hosjoy_eye",
-      "unicode": "e607",
-      "unicode_decimal": 58887
-    },
-    {
-      "icon_id": "9242963",
-      "name": "hosjoy_stay_online",
-      "font_class": "hosjoy_stay_online",
-      "unicode": "e606",
-      "unicode_decimal": 58886
-    },
-    {
-      "icon_id": "9242115",
-      "name": "hosjoy_permissions",
-      "font_class": "hosjoy_permissions",
-      "unicode": "e605",
-      "unicode_decimal": 58885
-    },
-    {
-      "icon_id": "9242112",
-      "name": "hosjoy_cloud_service",
-      "font_class": "hosjoy_cloud_service",
-      "unicode": "e604",
-      "unicode_decimal": 58884
-    },
-    {
-      "icon_id": "9241055",
-      "name": "hosjoy_date",
-      "font_class": "hosjoy_date",
-      "unicode": "e60b",
-      "unicode_decimal": 58891
-    },
-    {
-      "icon_id": "9241056",
-      "name": "hosjoy_account",
-      "font_class": "hosjoy_account",
-      "unicode": "e60c",
-      "unicode_decimal": 58892
-    },
-    {
-      "icon_id": "9241057",
-      "name": "hosjoy_down",
-      "font_class": "hosjoy_down",
-      "unicode": "e60d",
-      "unicode_decimal": 58893
-    },
-    {
-      "icon_id": "9241058",
-      "name": "hosjoy_goods",
-      "font_class": "hosjoy_goods",
-      "unicode": "e60e",
-      "unicode_decimal": 58894
-    },
-    {
-      "icon_id": "9241059",
-      "name": "hosjoy_left",
-      "font_class": "hosjoy_left",
-      "unicode": "e60f",
-      "unicode_decimal": 58895
-    },
-    {
-      "icon_id": "9241060",
-      "name": "hosjoy_member",
-      "font_class": "hosjoy_member",
-      "unicode": "e610",
-      "unicode_decimal": 58896
-    },
-    {
-      "icon_id": "9241061",
-      "name": "hosjoy_minus",
-      "font_class": "hosjoy_minus",
-      "unicode": "e611",
-      "unicode_decimal": 58897
-    },
-    {
-      "icon_id": "9241062",
-      "name": "hosjoy_home",
-      "font_class": "hosjoy_home",
-      "unicode": "e612",
-      "unicode_decimal": 58898
-    },
-    {
-      "icon_id": "9241063",
-      "name": "hosjoy_indent",
-      "font_class": "hosjoy_indent",
-      "unicode": "e613",
-      "unicode_decimal": 58899
-    },
-    {
-      "icon_id": "9241064",
-      "name": "hosjoy_password",
-      "font_class": "hosjoy_password",
-      "unicode": "e614",
-      "unicode_decimal": 58900
-    },
-    {
-      "icon_id": "9241065",
-      "name": "hosjoy_right",
-      "font_class": "hosjoy_right",
-      "unicode": "e615",
-      "unicode_decimal": 58901
-    },
-    {
-      "icon_id": "9241066",
-      "name": "hosjoy_search",
-      "font_class": "hosjoy_search",
-      "unicode": "e616",
-      "unicode_decimal": 58902
-    },
-    {
-      "icon_id": "9241067",
-      "name": "hosjoy_operation",
-      "font_class": "hosjoy_operation",
-      "unicode": "e617",
-      "unicode_decimal": 58903
-    },
-    {
-      "icon_id": "9241068",
-      "name": "hosjoy_money",
-      "font_class": "hosjoy_money",
-      "unicode": "e618",
-      "unicode_decimal": 58904
-    },
-    {
-      "icon_id": "9241069",
-      "name": "hosjoy_plus",
-      "font_class": "hosjoy_plus",
+      "icon_id": "13253923",
+      "name": "date",
+      "font_class": "date",
       "unicode": "e619",
       "unicode_decimal": 58905
     },
     {
-      "icon_id": "9241070",
-      "name": "hosjoy_outdent",
-      "font_class": "hosjoy_outdent",
-      "unicode": "e61a",
-      "unicode_decimal": 58906
+      "icon_id": "16859933",
+      "name": "按钮",
+      "font_class": "button",
+      "unicode": "e648",
+      "unicode_decimal": 58952
     },
     {
-      "icon_id": "9241071",
-      "name": "hosjoy_store",
-      "font_class": "hosjoy_store",
-      "unicode": "e61b",
-      "unicode_decimal": 58907
+      "icon_id": "16881014",
+      "name": "rate",
+      "font_class": "rate",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
     },
     {
-      "icon_id": "9241072",
-      "name": "hosjoy_return",
-      "font_class": "hosjoy_return",
-      "unicode": "e61c",
-      "unicode_decimal": 58908
+      "icon_id": "16930080",
+      "name": "级联动选择器",
+      "font_class": "cascader",
+      "unicode": "e616",
+      "unicode_decimal": 58902
     },
     {
-      "icon_id": "9241073",
-      "name": "hosjoy_help",
-      "font_class": "hosjoy_help",
-      "unicode": "e61d",
-      "unicode_decimal": 58909
+      "icon_id": "18727200",
+      "name": "input",
+      "font_class": "input",
+      "unicode": "e604",
+      "unicode_decimal": 58884
     },
     {
-      "icon_id": "9241074",
-      "name": "hosjoy_order",
-      "font_class": "hosjoy_order",
-      "unicode": "e61e",
-      "unicode_decimal": 58910
+      "icon_id": "18727238",
+      "name": "switch",
+      "font_class": "switch",
+      "unicode": "e608",
+      "unicode_decimal": 58888
     },
     {
-      "icon_id": "9241075",
-      "name": "hosjoy_up",
-      "font_class": "hosjoy_up",
-      "unicode": "e61f",
-      "unicode_decimal": 58911
+      "icon_id": "20981683",
+      "name": "radio",
+      "font_class": "radio",
+      "unicode": "e601",
+      "unicode_decimal": 58881
     },
     {
-      "icon_id": "9241076",
-      "name": "hosjoy_set",
-      "font_class": "hosjoy_set",
-      "unicode": "e620",
-      "unicode_decimal": 58912
+      "icon_id": "22782989",
+      "name": "m-穿梭框",
+      "font_class": "transfer",
+      "unicode": "e857",
+      "unicode_decimal": 59479
     }
   ]
 }

@@ -24,4 +24,8 @@ if (!db.has('codeInfo').value()) {
     db.set('codeInfo', []).write()
 }
 
+// swagger配置表
+if (!db.has('swaggerConfig').value()) {
+    db.set('swaggerConfig', []).write()
+}
 export default db

@@ -13,7 +13,7 @@ export const generateScript = (data) => {
     }
 </script>
     `
-    return pretty(script).replace('"', '\'').replace(';', '')
+    return pretty(script).replace(/\"/g, '\'').replace(';', '')
 }
 
 /**

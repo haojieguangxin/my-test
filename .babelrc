@@ -15,7 +15,8 @@
         }]
       ],
       "plugins": [
-        "babel-plugin-transform-vue-jsx"
+        "babel-plugin-transform-vue-jsx",
+        "@babel/plugin-transform-runtime" // 处理regeneratorRuntime is not defined问题
       ]
     },
     "web": {

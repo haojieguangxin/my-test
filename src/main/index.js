@@ -38,6 +38,32 @@ function createMenu (mainWindow) {
                     }
                 }
             ]
+        },
+        {
+            label: '配置项',
+            submenu: [
+                {
+                    label: 'swagger配置',
+                    click () {
+                        mainWindow.webContents.send('href', 'swaggerConfig')
+                    }
+                }
+            ]
+        },
+        {
+            label: 'Edit',
+            submenu: [
+                {
+                    label: 'Copy',
+                    accelerator: 'CmdOrCtrl+C',
+                    selector: 'copy:'
+                },
+                {
+                    label: 'Paste',
+                    accelerator: 'CmdOrCtrl+V',
+                    selector: 'paste:'
+                }
+            ]
         }
     ]
     const menu = Menu.buildFromTemplate(template)

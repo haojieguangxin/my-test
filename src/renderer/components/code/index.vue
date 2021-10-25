@@ -1,79 +1,24 @@
 <template>
     <div class="code-main">
-        <div class="code-content" @click="onProxy">
-            <div v-if="layout">
-                <Preview :code="code" :codeConfig="codeConfig" :scriptCodeConfig="scriptCodeConfig"></Preview>
+        <div class="code-content">
+            <div v-if="layoutForm.template">
+                <Preview :code="code" @callback="onShowItemEdit"></Preview>
             </div>
             <i class="el-icon-circle-plus-outline add-template" @click="onShowLayout" v-else></i>
         </div>
-        <el-dialog title="选择模板" :visible.sync="layoutVisible" width="500px" :modal=false>
-            <el-form ref="layoutForm" :model="layoutForm" :rules="layoutRules" label-width="100px">
-                <el-form-item label="模板:" label-width='100px' prop='template'>
-                    <el-select v-model="layoutForm.template" clearable>
-                        <el-option v-for="(item, index) in layoutOptions" :key="index" :label="item.label" :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="layoutVisible = false">取 消</el-button>
-                <el-button type="primary" @click="onTemplateSelected">确 定</el-button>
-            </span>
-        </el-dialog>
-        <el-drawer :title="editTitle" :visible.sync="editVisible" :before-close="onEditCancel" size='580px'>
-            <draggable v-model="editForm[editKey]" class="options-item-wrapper">
-                <div v-for="(item, index) in editForm[editKey]" :key="index" class="options-item">
-                    <el-input v-model="item.config.label" class="mr10"></el-input>
-                    <el-select v-model="item.config.type" @change="onChangeItemType($event, index)">
-                        <el-option v-for="item in itemTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                    </el-select>
-                    <i class="el-icon-circle-plus-outline" @click="onAddItem(index)"></i>
-                    <i class="el-icon-remove-outline" @click="onRemoveItem(index)"></i>
-                    <i class="el-icon-edit-outline" @click="onEditItem(index)"></i>
-                </div>
-            </draggable>
-        </el-drawer>
-        <el-dialog class="edit-dialog" title="编辑" :visible.sync="editItemVisible" width="600px" :modal=false>
-            <el-form ref="itemForm" :model="itemForm" :rules="layoutRules" label-width="100px">
-                <template v-for="(item, index) in itemFormOptions" >
-                    <el-form-item :label="item.key" label-width='100px' :key="index" :prop="item.key"
-                        v-if="item.isShow()">
-                        <template v-if="item.key === 'model' || item.key.indexOf('Model') !== -1">
-                            <el-input v-model="itemForm[item.key]">
-                                <template slot="prepend">queryParams.</template>
-                            </el-input>
-                        </template>
-                        <template v-else-if="item.key === 'dateType' && itemForm.type === 'search_date_area'">
-                            <el-select v-model="itemForm[item.key]">
-                                <el-option v-for="(obj, index) in options.dateAreaType" :key="index" :label="obj.label" :value="obj.value"></el-option>
+        <LayoutForm :layoutVisible="layoutVisible" @callback="layoutCallback"></LayoutForm>
+        <el-drawer class="edit-dialog" title="编辑" :visible.sync="editItemVisible" width="600px" :modal=false>
+            <el-form ref="itemForm" :model="itemForm" label-width="100px">
+                <template v-for="(item, index) in itemForm.props" >
+                    <el-form-item :label="item.name" label-width='100px' :key="index" :prop="item.name">
+                        <!-- 当存在options的时候，说明是下拉选项 -->
+                        <template v-if="item.options">
+                            <el-select  v-model="item.value">
+                                <el-option v-for="oItem in item.options" :key="oItem.value" :value="oItem.value" :label="oItem.label"></el-option>
                             </el-select>
-                        </template>
-                        <template v-else-if="item.key === 'format' && itemForm.type === 'search_date_area'">
-                            <el-select v-model="itemForm[item.key]">
-                                <el-option v-for="(obj, index) in options.dateAreaFormat" :key="index" :label="obj.label" :value="obj.value"></el-option>
-                            </el-select>
-                        </template>
-                        <template v-else-if="item.key === 'buttonType'">
-                            <el-select v-model="itemForm[item.key]">
-                                <el-option v-for="(obj, index) in options.buttonType" :key="index" :label="obj.label" :value="obj.value"></el-option>
-                            </el-select>
-                        </template>
-                        <template v-else-if="item.key === 'isConst' || item.key === 'isMulti' || item.key === 'canSearch'">
-                            <el-radio v-model="itemForm[item.key]" :label="true">是</el-radio>
-                            <el-radio v-model="itemForm[item.key]" :label="false">否</el-radio>
-                        </template>
-                        <template v-else-if="item.key === 'options'">
-                            <ul>
-                                <li v-for="(obj, index) in itemForm[item.key]" :key="index" class="options-item">
-                                    <el-input v-model="obj.label" class="mr10" placeholder="请输入label"></el-input>
-                                    <el-input v-model="obj.value" class="mr10" placeholder="请输入value"></el-input>
-                                    <i class="el-icon-circle-plus-outline" @click="onAddSelectOption(index)"></i>
-                                    <i class="el-icon-remove-outline" @click="onRemoveSelectOption(index)"></i>
-                                </li>
-                            </ul>
                         </template>
                         <template v-else>
-                            <el-input v-model="itemForm[item.key]"></el-input>
+                            <el-input v-model="item.value"></el-input>
                         </template>
                     </el-form-item>
                 </template>
@@ -82,7 +27,7 @@
                 <el-button @click="editItemVisible = false">取 消</el-button>
                 <el-button type="primary" @click="onEditItemOK">确 定</el-button>
             </span>
-        </el-dialog>
+        </el-drawer>
         <el-drawer title="导出代码配置" :visible.sync="exportVisible" size='580px'>
             <el-form ref="exportForm" :model="exportForm" label-width="100px">
                 <el-form-item label="导出位置" label-width='100px' prop="path">
@@ -106,38 +51,41 @@
 
 <script>
 import fs from 'fs-extra'
-import draggable from 'vuedraggable'
 import * as snippet from '@/snippet/snippet'
-import * as scriptSnippet from '@/snippet/scriptSnippet'
+// import * as scriptSnippet from '@/snippet/scriptSnippet'
 import Preview from './preview'
 import { generateHtml, generateScript } from '@/helper/code_helper'
-import * as config from './config'
-import { LIST_CLASS, OPTIONS } from './const'
+// import * as config from './config'
+import { OPTIONS } from './const'
+import LayoutForm from './components/layoutForm'
 export default {
     name: 'auto_code',
     components: {
         Preview,
-        draggable
+        LayoutForm
     },
     data () {
         return {
+            /**
+             *  ========  模板选择弹出层 ============
+             */
             layoutVisible: false,
-            editVisible: false,
-            editItemVisible: false,
-            exportVisible: false,
-            layoutOptions: [
-                { label: '列表', value: 'LIST' },
-                { label: '表单', value: 'FORM' }
-            ],
-            layout: '',
             layoutForm: {
-                template: ''
+                template: '',
+                gateway: '',
+                business: '',
+                url: ''
             },
-            layoutRules: {
-                template: [
-                    { required: true, message: '请选择模板', trigger: 'change' }
-                ]
-            },
+            backendApis: [],
+            /**
+             *  ========  组件配置 ============
+             */
+            editItemVisible: false,
+            itemForm: {},
+            /**
+             *  ========  导出操作 ============
+             */
+            exportVisible: false,
             code: '',
             codeConfig: [], // 生成Code的Config
             scriptCode: '',
@@ -145,22 +93,6 @@ export default {
                 data: {},
                 methods: []
             },
-            selectArea: '', // 当前选择的区域
-            editTitle: '搜索区域编辑',
-            editKey: '',
-            editForm: {
-                list_search: [
-                    { type: 'SEARCH_ITEM', config: { label: '', type: '' } }
-                ],
-                list_action: [
-                    { type: '', config: { label: '', type: '' } }
-                ],
-                list_table: [
-                    { type: '', config: { label: '', type: '' } }
-                ]
-            },
-            editIndex: 0,
-            itemForm: {},
             exportForm: {
                 fileName: 'index',
                 path: ''
@@ -169,17 +101,44 @@ export default {
         }
     },
     computed: {
-        itemTypeOptions () {
-            return config[this.editKey.toUpperCase() + '_CONFIG']
+        queryParamsOptions () {
+            let result = []
+            if (this.backendApis.paths) {
+                const matchedUrlInfo = Object.keys(this.backendApis.paths).filter(item => item.indexOf(this.layoutForm.url) !== -1)
+                if (matchedUrlInfo.length > 0) {
+                    if (this.backendApis.paths[matchedUrlInfo[0]].get.parameters) {
+                        // 暂时只支持swagger get请求不使用ref的情况  使用ref的时候in='body'
+                        result = this.backendApis.paths[matchedUrlInfo[0]].get.parameters.filter(item => item.in === 'query').map(item => {
+                            return {
+                                label: item.description,
+                                value: item.name
+                            }
+                        })
+                    }
+                }
+            }
+            return result
         },
-        // itemForm () {
-        //     if (this.editKey) {
-        //         console.log(JSON.parse(JSON.stringify(this.editForm[this.editKey][this.editIndex].config)))
-        //         return JSON.parse(JSON.stringify(this.editForm[this.editKey][this.editIndex].config))
-        //         // return this.editForm[this.editKey][this.editIndex].config
-        //     }
-        //     return {}
-        // },
+        responseOptions () {
+            let result = []
+            if (this.backendApis.paths) {
+                const matchedUrlInfo = Object.keys(this.backendApis.paths).filter(item => item.indexOf(this.layoutForm.url) !== -1)
+                if (matchedUrlInfo.length > 0) {
+                    if (this.backendApis.paths[matchedUrlInfo[0]].get.responses) {
+                        // 暂时只支持swagger get请求不使用ref的情况  使用ref的时候in='body'
+                        const ref = this.backendApis.paths[matchedUrlInfo[0]].get.responses['200'].schema.$ref.replace('#/definitions/', '')
+                        result = Object.entries(this.backendApis.definitions[ref].properties).map(([key, value]) => ({
+                            label: value.description || key,
+                            value: key
+                        }))
+                    }
+                }
+            }
+            return result
+        },
+        /**
+         * end 这部分是swagger相关信息部分
+         */
         itemFormOptions () {
             return Object.keys(this.itemForm).map(item => {
                 const result = {
@@ -193,147 +152,47 @@ export default {
         }
     },
     watch: {
-        editForm: {
-            handler (val) {
-                // editForm是配置展示项的Form，当配置项发生变化，代码配置重新调整
-                // editForm中的属性和LIST_LAYOUT中的type做对应关系，editKey记录的是editForm中对应的key值
-                this.codeConfig = this.codeConfig.map(item => {
-                    if (item.type === this.editKey.toUpperCase()) {
-                        item.children = this.editForm[this.editKey]
-                    }
-                    return item
-                })
-                let queryParams = {}
-                let options = {}
-                let methods = this.scriptCodeConfig.methods
-                this.codeConfig.map(item => {
-                    if (item.children) {
-                        const modelItems = item.children.filter(item => {
-                            return item.config.model || item.config.startModel || item.config.endModel
-                        })
-                        modelItems.forEach(item => {
-                            if (item.config.type === 'search_select') {
-                                // 选择框可选项定义
-                                options[item.config.model + 'Options'] = []
-                            } else if (item.config.type === 'search_date_area') {
-                                // 时间搜索区域method，处理开始日期和结束日期disabled
-                                methods.push(scriptSnippet.START_PICKER_OPTIONS(item.config))
-                                methods.push(scriptSnippet.END_PICKER_OPTIONS(item.config))
-                            }
-                            if (item.config.model) {
-                                queryParams[item.config.model] = ''
-                            }
-                            if (item.config.startModel) {
-                                queryParams[item.config.startModel] = ''
-                            }
-                            if (item.config.endModel) {
-                                queryParams[item.config.endModel] = ''
-                            }
-                        })
-                    }
-                })
-                options.queryParams = queryParams
-                this.scriptCodeConfig.data = options
-                this.scriptCodeConfig.methods = methods
-            },
-            deep: true
-        },
         codeConfig: {
             handler (val) {
                 // 每次codeConfig发生变化。就重新生成代码进行展示
                 this.code = snippet['LAYOUT_SNIPPET'](generateHtml(val, snippet).join('\n\r'))
+                console.log(this.code)
             },
             deep: true
         },
         scriptCodeConfig: {
             handler (val) {
                 this.scriptCode = generateScript(val)
-                console.log(val)
-                console.log(this.scriptCode)
             },
             deep: true
         }
     },
     methods: {
-        // 寻找点击的区域
-        _findClickArea (target) {
-            if (target.className) {
-                const classArr = LIST_CLASS.filter(item => target.className.includes(item.class))
-                if (classArr.length > 0) {
-                    return classArr[0]
-                }
-            }
-            if (!target.parentNode) {
-                // 当寻找到最外层，发现没有对应可以编辑的区域，直接返回空
-                return ''
-            }
-            return this._findClickArea(target.parentNode)
-        },
         onShowLayout () {
             this.layoutVisible = true
         },
-        onTemplateSelected () {
-            this.layout = this.layoutForm.template
-            this.codeConfig = config[this.layoutForm.template + '_LAYOUT']
-            this.code = snippet['LAYOUT_SNIPPET'](generateHtml(this.codeConfig, snippet).join('\n\r'))
-            this.layoutVisible = false
-        },
-        onProxy (e) {
-            // 使用事件代理，用className判定点击的是哪个
-            const clickArea = this._findClickArea(e.target)
-            // 当点击不可编辑区域，直接返回
-            if (!clickArea) {
-                return false
+        layoutCallback (params) {
+            this.layoutVisible = params.layoutVisible
+            if (params.backendApis) {
+                this.backendApis = params.backendApis
             }
-            this.editVisible = true
-            this.editTitle = clickArea.name + '编辑'
-            this.editKey = clickArea.key
-        },
-        onShowConfig () {
-
-        },
-        onEditCancel () {
-            this.editVisible = false
-        },
-        onAddItem (index) {
-            if (this.editKey === 'list_search') {
-                this.editForm[this.editKey].splice(index + 1, 0, {type: 'SEARCH_ITEM', config: {label: '', type: ''}})
-            } else {
-                this.editForm[this.editKey].splice(index + 1, 0, {type: '', config: {label: '', type: ''}})
+            if (params.layoutForm) {
+                this.layoutForm = params.layoutForm
+                this.code = snippet[this.layoutForm.template + '_LAYOUT_SNIPPET']
             }
         },
-        onRemoveItem (index) {
-            if (this.editForm[this.editKey].length === 1) {
-                this.$alert('至少保留一个选项', '提示', {
-                    confirmButtonText: '确定'
-                })
-                return
-            }
-            this.editForm[this.editKey].splice(index, 1)
-        },
-        onEditItem (index) {
-            this.editIndex = index
+        onShowItemEdit (item) {
             this.editItemVisible = true
-            this.itemForm = JSON.parse(JSON.stringify(this.editForm[this.editKey][this.editIndex].config))
+            this.itemForm = item.html.filter(i => i.selected)[0]
         },
         onEditItemOK () {
-            this.editForm[this.editKey][this.editIndex].config = JSON.parse(JSON.stringify(this.itemForm))
             this.editItemVisible = false
         },
-        onAddSelectOption (index) {
-            this.itemForm.options.splice(index + 1, 0, {label: '', value: ''})
+        onAddSelectOption (index, name) {
+            this.itemForm[name].splice(index + 1, 0, {label: '', value: ''})
         },
         onRemoveSelectOption (index) {
-            this.itemForm.options.splice(index, 1)
-        },
-        onChangeItemType (val, index) {
-            const selectedItem = this.itemTypeOptions.filter(item => item.value === val)
-            const selectedConfig = JSON.parse(JSON.stringify(selectedItem[0].config))
-            // 当没有设置默认值的时候，label为我们设置的label，一般设置默认值的都是不需要修改的label
-            if (!selectedConfig.label) {
-                selectedConfig.label = this.editForm[this.editKey][index].config.label
-            }
-            this.editForm[this.editKey][index].config = selectedConfig
+            this.itemForm[name].splice(index, 1)
         },
         /**
          * 下面的方法，都是保存和导出代码相关方法
@@ -446,6 +305,13 @@ export default {
 }
 .edit-dialog /deep/ .el-dialog .el-input {
     width: 400px;
+}
+/deep/ .B2b .query-cont__row {
+    padding-top: 20px;
+    border: 1px dotted;
+}
+/deep/ .B2b .query-cont__row+.button-cont {
+    border: 1px dotted;
 }
 /deep/ .el-drawer__header>:first-child {
     outline-style: none

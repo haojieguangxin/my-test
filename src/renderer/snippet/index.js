@@ -1,44 +1,31 @@
-export const LIST_LAYOUT_SNIPPET = (slot) => `
-<div class="page-body B2b">
-    <div class="page-body-cont">
-        <div class="query-cont__row">
-            ${slot.search}
-            <div class="query-cont__col">
-                <h-button type="primary" @click="onQuery">查询</h-button>
-                <h-button @click="onReset">重置</h-button>
-                ${slot.isExport ? '<h-button @click="onReset">重置</h-button>' : ''}
-            </div>
-        </div>
-        ${slot.button}
-        ${slot.table}
-    </div>
-</div>
-`
-export const SEARCH_ITEM_SNIPPET = (data) => `
-<div class="query-cont__col">
-    <div class="query-col__lable">${data.label}</div>
-    <div class="query-col__input">
-        <el-input v-model="queryParams.${data.model}" placeholder="${data.placeholder}" maxlength="${data.maxlength}"></el-input>
-    </div>
-</div>
-`
-export const SEARCH_INPUT_SNIPPET = (data) => `
-<el-input v-model="queryParams.${data.model}" placeholder="${data.placeholder}" maxlength="${data.maxlength}"></el-input>
-`
-export const SEARCH_SELECT_SNIPPET = (data) => `
-<el-select v-model="queryParams.${data.model}">
-    <el-option v-for="item in ${data.model}Options" :key="item.value" :label="item.label" :value="item.value">
-    </el-option>
-</el-select>
-`
-export const SEARCH_DATE_AREA_SNIPPET = (data) => `
-<el-date-picker v-model="queryParams.${data.modelStart}" type="${data.type}" value-format="${data.format}" placeholder="${data.placeholder}" :picker-options="${data.modelStart}Options">
-</el-date-picker>
-<span class="ml10">-</span>
-<el-date-picker v-model="queryParams.${data.modelEnd}" type="${data.type}" value-format="${data.format}" placeholder="${data.placeholder}" :picker-options="${data.modelEnd}Options">
-</el-date-picker>
-`
-
-export const QUERY_FUNC = 'onQuery'
-
-export const RESET_FUNC = 'onReset'
+import Vue from 'vue'
+export default {
+    name: 'componentItem',
+    props: {
+        item: {
+            required: true,
+            desc: 'config文件中定义的组件配置信息'
+        }
+    },
+    methods: {
+        codeGenerate (config) {
+            let selected = config.filter(item => item.selected)[0]
+            let result = `<${selected.htmlLabel}>`
+            if (selected.children) {
+                result += this.codeGenerate(selected.children)
+            }
+            result += `</${selected.htmlLabel}>`
+            console.log(result)
+            return result
+        }
+    },
+    render (h) {
+        const code = this.codeGenerate(this.item.html)
+        // 这里是关键，将string字符串转换成模板
+        // 难点是String中包含了自定义组件，使用v-html是解析不了的
+        const result = Vue.extend({
+            template: code
+        })
+        return h(result, {})
+    }
+}

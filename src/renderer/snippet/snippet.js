@@ -1,7 +1,36 @@
 export const LAYOUT_SNIPPET = (children) => `
 <div class="page-body B2b">
     <div class="page-body-cont">
-        ${children}
+        <draggable group="component" :list="pageComponents" @change="onDragged">
+            ${children}
+        </draggable>
+    </div>
+</div>
+`
+export const LIST_LAYOUT_SNIPPET = `
+<div class="page-body B2b">
+    <div class="page-body-cont">
+        <div class="query-cont__row">
+            <div class="query-cont__col">
+                <div class="query-col__label"></div>
+                <div class="query-col__input"></div>
+            </div>
+            <draggable group="component" :list="list1">
+                <div class="query-cont__col" v-for="(item, index) in list1" :key="item.name + '_' + index" @click="onShowItemEdit(item)">
+                    <div class="query-col__label">{{item.label}}</div>
+                    <div class="query-col__input">
+                        <componentItem :item="item"/>
+                    </div>
+                </div>
+            </draggable>
+        </div>
+        <div class="button-cont">
+            <draggable group="component" :list="list2">
+                <div class="query-cont-col" v-for="(item, index) in list2" :key="item.name + '_' + index" @click="onShowItemEdit(item)">
+                    <componentItem :item="item"/>
+                </div>
+            </draggable>
+        </div>
     </div>
 </div>
 `
@@ -156,5 +185,21 @@ export const SEARCH_DISTRICT_SNIPPET = (data) => {
      */
     return `
     <el-cascader :options="categoryOptions" v-model="categoryIdArr" clearable @change="onSearchCategoryChange"></el-cascader>
+    `
+}
+
+export const TABLE_SNIPPET = (data) => {
+    return `
+    <basicTable :tableLabel="tableLabel"
+        :tableData="tableData"
+        :isAction="${data.isAction}"
+        :isShowIndex="${data.isShowIndex}"
+        :pagination="pagination"
+        @onSizeChange="onSizeChange"
+        @onCurrentChange="onCurrentChange">
+        <template slot="action" slot-scope="scope">
+            <!-- TODO -->
+        </template>
+    </basicTable>
     `
 }

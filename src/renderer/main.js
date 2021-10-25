@@ -9,7 +9,9 @@ import 'hosjoy-ui/lib/hosjoy-ui.css'
 import router from './router'
 import basicTable from '@/common/CommonTable'
 import '@/assets/style/common.scss'
+import VueDND from 'awe-dnd'
 
+Vue.use(VueDND)
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false

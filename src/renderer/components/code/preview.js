@@ -1,75 +1,46 @@
 import Vue from 'vue'
+import draggable from 'vuedraggable'
+import componentItem from '@/snippet/index.js'
 export default {
     name: 'PREVIEW',
     props: {
         code: {
             required: true
-        },
-        codeConfig: {},
-        scriptCodeConfig: {
-            default: () => {
-                return {
-                    data: {},
-                    methods: []
-                }
-            }
         }
     },
     render (h) {
-        let methods = {}
-        if (this.codeConfig[0].children) {
-            const modelItems = this.codeConfig[0].children.filter(item => {
-                return item.config.model || item.config.startModel || item.config.endModel
-            })
-            modelItems.forEach(item => {
-                if (item.config.type === 'search_date_area') {
-                    // 时间搜索区域method，处理开始日期和结束日期disabled
-                    methods = {
-                        ...methods,
-                        [item.config.startModel + 'PickerOptions'] () {
-                            return {
-                                disabledDate: (time) => {
-                                    let beginDateVal = this.queryParams[item.config.endModel]
-                                    if (beginDateVal) {
-                                        return time.getTime() > new Date(beginDateVal).getTime()
-                                    }
-                                }
-                            }
-                        },
-                        [item.config.endModel + 'PickerOptions'] () {
-                            return {
-                                disabledDate: (time) => {
-                                    let beginDateVal = this.queryParams[item.config.startModel]
-                                    if (beginDateVal) {
-                                        return time.getTime() < new Date(beginDateVal).getTime()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            })
-        }
-        let options = this.scriptCodeConfig.data
         // 这里是关键，将string字符串转换成模板
         // 难点是String中包含了自定义组件，使用v-html是解析不了的
         const result = Vue.extend({
+            components: {
+                draggable,
+                componentItem
+            },
             template: this.code,
             data () {
                 return {
-                    tempModel: '', // 當model沒有設置的時候，v-model臨時設置為tempModel
-                    tempModelOptions: [{ label: '', value: '' }],
-                    ...options
+                    list1: [],
+                    list2: [],
+                    list3: []
                 }
             },
             methods: {
-                tempModelPickerOptions () { },
-                onQuery () { },
-                onReset () { },
-                onTempClick () { },
-                ...methods
+                onDragged () {
+                },
+                onShowItemEdit (item) {
+                    // 由于是子组件中包含的子组件，所有emit的时候不会到index.vue中
+                    this.$emit('onShowItemEdit', item)
+                }
             }
         })
-        return h(result, {})
+        return h(result, {
+            // 这里很重要，必须使用箭头函数获取当前this
+            // 这才是真正的子组件中的方法
+            on: {
+                onShowItemEdit: (item) => {
+                    this.$emit('callback', item)
+                }
+            }
+        })
     }
 }

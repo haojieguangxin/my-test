@@ -79,7 +79,10 @@ export const LIST_SEARCH_CONFIG = [
             startModel: '',
             endModel: '',
             dateType: 'date',
-            format: 'YYYY-MM-DD'
+            format: 'YYYY-MM-DD',
+            script: {
+                methods: ['START_PICKER_OPTIONS', 'END_PICKER_OPTIONS']
+            }
         }
     },
     {
@@ -90,7 +93,7 @@ export const LIST_SEARCH_CONFIG = [
             label: '查询',
             buttonType: 'primary',
             script: {
-                methods: [`onQuery() {}`]
+                methods: ['ON_QUERY']
             }
         }
     },
@@ -102,7 +105,7 @@ export const LIST_SEARCH_CONFIG = [
             label: '重置',
             buttonType: '',
             script: {
-                methods: [`onReset() {}`]
+                methods: ['ON_RESET']
             }
         }
     },
@@ -114,7 +117,7 @@ export const LIST_SEARCH_CONFIG = [
             label: '重置',
             buttonType: '',
             script: {
-                methods: [`onExport() {}`]
+                methods: ['ON_EXPORT']
             }
         }
     }
@@ -138,8 +141,11 @@ export const LIST_TABLE_CONFIG = [
         value: 'table',
         config: {
             type: 'table',
-            label: '',
-            buttonType: ''
+            label: '表格',
+            tableLabel: [],
+            tableData: [],
+            isAction: true, // 是否有操作列
+            isShowIndex: true // 是否显示序号
         }
     }
 ]
